@@ -79,6 +79,7 @@ export default class {
   }
 
   handleClickIconEye = () => {
+
     const billUrl = $('#icon-eye-d').attr("data-bill-url")
     const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8)
     $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} alt="Bill"/></div>`)
@@ -137,6 +138,7 @@ export default class {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
+      this.attachEventHandlers(bills);
       this.counter ++
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
@@ -145,12 +147,13 @@ export default class {
       this.counter ++
     }
 
-    bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-    })
-
     return bills
+}
 
+  attachEventHandlers(bills) {
+      bills.forEach(bill => {
+        $(`#open-bill${bill.id}`).off('click').click((e) => this.handleEditTicket(e, bill, bills))
+      });
   }
 
   getBillsAllUsers = () => {
