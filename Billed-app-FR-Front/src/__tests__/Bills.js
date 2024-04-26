@@ -86,7 +86,6 @@ describe("Given I am connected as an employee", () => {
       expect($.fn.modal).toHaveBeenCalledWith("show");
     });
     test("getBills should return bills with formatted date and status", async () => {
-      // Mock store.bills().list() method
       const mockList = jest.fn().mockResolvedValue([
         { date: "2023-04-26T00:00:00", status: "pending" },
         { date: "2023-04-27T00:00:00", status: "accepted" },
@@ -108,15 +107,14 @@ describe("Given I am connected as an employee", () => {
 
       const bills = await billsContainer.getBills();
 
-      // Asserting the returned bills
       expect(bills).toEqual([
         { date: "26 Avr. 23", status: "En attente" },
         { date: "27 Avr. 23", status: "Accepté" },
         { date: "28 Avr. 23", status: "Refused" }
       ]);
 
-      // Asserting that store.bills().list() is called
       expect(store.bills().list).toHaveBeenCalled();
     });
+
   })
 })
