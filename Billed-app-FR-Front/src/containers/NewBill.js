@@ -22,12 +22,12 @@ export default class NewBill {
     const allowedExtensions = ['jpg', 'jpeg', 'png']
 
     if (file) {
-      const filePath = fileInput.value.split(/\\/g)
-      const fileName = filePath[filePath.length-1]
+      // const filePath = fileInput.value.split(/\\/g)
+      const fileName = file.name
       const fileExtension = fileName.split('.').pop().toLowerCase()
 
       if (!allowedExtensions.includes(fileExtension)) {
-        console.log('Veuillez sélectionner un fichier avec une extension jpg, jpeg ou png.')
+        // console.log('Veuillez sélectionner un fichier avec une extension jpg, jpeg ou png.')
         // Réinitialiser l'input file pour effacer le fichier sélectionné
         fileInput.value = ''
         return
@@ -38,7 +38,7 @@ export default class NewBill {
       formData.append('file', file)
       formData.append('email', email)
 
-      this.store
+      return this.store
         .bills()
         .create({
           data: formData,
@@ -47,7 +47,6 @@ export default class NewBill {
           }
         })
         .then(({fileUrl, key}) => {
-          console.log(fileUrl)
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
@@ -57,7 +56,6 @@ export default class NewBill {
   }
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,

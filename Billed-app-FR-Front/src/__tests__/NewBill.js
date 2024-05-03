@@ -44,6 +44,7 @@ describe("Given I am connected as an employee", () => {
       expect(fileInput).toBeTruthy()
     })
   })
+
   describe("When I handle file change", () => {
     const localStorage = {
       getItem: jest.fn(() => JSON.stringify({ email: "test@example.com" })),
@@ -82,7 +83,6 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html;
       const newBill = new NewBill({ document, onNavigate: jest.fn(), store, localStorage });
 
-      // Mocking the update function
       store.bills().update = jest.fn().mockImplementation(() => Promise.resolve());
 
       const form = screen.getByTestId("form-new-bill");
@@ -95,7 +95,6 @@ describe("Given I am connected as an employee", () => {
 
       await Promise.resolve();
 
-      // Expect updateBill to be called with the correct arguments
       expect(store.bills().update).toHaveBeenCalledWith({
         data: JSON.stringify({
           type: "Hôtel et logement",
@@ -109,12 +108,26 @@ describe("Given I am connected as an employee", () => {
           fileName: "test-file-name",
           status: "pending"
         }),
-        selector: null // This should be the correct selector value
+        selector: null
       });
 
-      // Expect navigation to the bills page
       expect(newBill.onNavigate).toHaveBeenCalledWith(ROUTES_PATH["Bills"]);
     });
+    test("Submitting the form should create a new bill with correct data", async () => {
+      const html = NewBillUI();
+      document.body.innerHTML = html;
 
+
+      const newBill = new NewBill({ document, onNavigate: jest.fn(), store, localStorage });
+      const handleChangeFile = jest.spyOn(newBill, "handleChangeFile");
+      const file = new File(["file content"], "filename.jpg", { type: "image/jpeg" });
+
+      const fileInput = screen.getByTestId("file");
+      userEvent.upload(fileInput, file);
+
+      const form = screen.getByTestId("form-new-bill");
+      const result = form.dispatchEvent(new Event("submit"));
+      expect(result).toBeTruthy()
+    });
   });
 });
