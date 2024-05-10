@@ -126,8 +126,31 @@ describe("Given I am connected as an employee", () => {
       userEvent.upload(fileInput, file);
 
       const form = screen.getByTestId("form-new-bill");
+      form.querySelector(`select[data-testid="expense-type"]`).value = "Hôtel et logement";
+      form.querySelector(`input[data-testid="expense-name"]`).value = "Test expense";
+      form.querySelector(`input[data-testid="amount"]`).value = "100";
+      form.querySelector(`input[data-testid="datepicker"]`).value = "2024-05-10";
+      form.querySelector(`input[data-testid="vat"]`).value = "VAT123";
+      form.querySelector(`input[data-testid="pct"]`).value = "20";
+      form.querySelector(`textarea[data-testid="commentary"]`).value = "Test commentary";
+
+      store.bills().create = jest.fn().mockImplementationOnce((data) => {
+        expect(data).toEqual({
+          data: expect.any(FormData),
+          headers: {
+            noContentType: true
+          }
+        });
+
+        return Promise.resolve({ fileUrl: "test-file-url", key: "test-key" });
+      });
       const result = form.dispatchEvent(new Event("submit"));
-      expect(result).toBeTruthy()
+      expect(result).toBeTruthy();
+
+      await waitFor(() => {
+
+        expect(newBill.onNavigate).toHaveBeenCalledWith(ROUTES_PATH["Bills"]);
+      });
     });
   });
 });
